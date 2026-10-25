@@ -5,7 +5,7 @@
 ════════════════════════════════════════════════════════════════════════════ */
 const ScryfallService = (() => {
   const API_BASE = 'https://api.scryfall.com';
-  constCDN_BASE  = 'https://cards.scryfall.io/';
+  const CDN_BASE = 'https://cards.scryfall.io/';
 
   // Embedded SVG fallback card-back so it never 404s or gets blocked by CORS
   const FALLBACK_CARD_BACK = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
@@ -61,11 +61,11 @@ const ScryfallService = (() => {
       trimmed.startsWith('small/') ||
       trimmed.startsWith('png/')
     ) {
-      return constCDN_BASE + trimmed;
+      return CDN_BASE + trimmed;
     }
 
     // Otherwise it's a bare '<dir1>/<dir2>/<uuid>.jpg' path
-    return constCDN_BASE + defaultFolder + trimmed.replace(/^\/+/, '');
+    return CDN_BASE + defaultFolder + trimmed.replace(/^\/+/, '');
   }
 
   /**
@@ -502,3 +502,4 @@ const ScryfallService = (() => {
     getStats: () => ({ ...debugStats }),
   };
 })();
+window.ScryfallService = ScryfallService;

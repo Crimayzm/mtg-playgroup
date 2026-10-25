@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="playgroup-board.css"/>
+<link rel="stylesheet" href="playgroup-board.css?v=2"/>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -430,8 +430,8 @@ body{
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script src="commanders-data.js"></script>
 <script src="deck-builder-db.js"></script>
-<script src="scryfall-service.js"></script>
-<script src="playgroup-board.js"></script>
+<script src="scryfall-service.js?v=2"></script>
+<script src="playgroup-board.js?v=2"></script>
 
 <script>
 'use strict';
@@ -1023,6 +1023,53 @@ document.addEventListener('DOMContentLoaded', () => {
       renderLobbyHeader();
       Net.broadcastState();
     }
+  });
+
+  document.getElementById('lobbyCodeBadge').addEventListener('click', e => {
+    navigator.clipboard?.writeText(e.target.textContent);
+    toast('Code du salon copié !');
+  });
+
+  document.querySelectorAll('#globalBracketPills [data-gb]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!S.isHost) return;
+      document.querySelectorAll('#globalBracketPills [data-gb]').forEach(b => b.classList.remove('active-pill'));
+      btn.classList.add('active-pill');
+      S.defaultBracket = parseInt(btn.dataset.gb, 10);
+      renderLobbyHeader();
+      Net.broadcastState();
+    });
+  });
+
+  document.querySelectorAll('#manaAltar .mana-orb').forEach(orb => {
+    orb.addEventListener('click', () => {
+      if (!S.isHost) return;
+      const m = orb.dataset.mana;
+      if (S.allowedMana.has(m)) {
+        if (S.allowedMana.size > 1) { S.allowedMana.delete(m); orb.classList.remove('active'); }
+      } else {
+        S.allowedMana.add(m); orb.classList.add('active');
+      }
+    });
+  });
+
+  document.querySelectorAll('#drawModePills [data-dm]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!S.isHost) return;
+      document.querySelectorAll('#drawModePills [data-dm]').forEach(b => b.classList.remove('active-pill'));
+      btn.classList.add('active-pill');
+      S.drawMode = btn.dataset.dm;
+    });
+  });
+
+  document.getElementById('btnRealm').addEventListener('click', () => {
+    S.realmIdx = (S.realmIdx + 1) % REALMS.length;
+    document.getElementById('realmLabel').textContent = REALMS[S.realmIdx].name;
+  });
+
+  document.getElementById('muteBtn').addEventListener('click', e => {
+    S.muted = !S.muted;
+    e.currentTarget.classList.toggle('active-toggle', S.muted);
   });
 
   document.getElementById('btnDraw').addEventListener('click', startDraw);
