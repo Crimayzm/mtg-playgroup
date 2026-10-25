@@ -1,0 +1,563 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   STEP 0 & PHASE A: PLAYGROUP LIVE TABLETOP BOARD STYLESHEET
+════════════════════════════════════════════════════════════════════════════ */
+
+/* 1. Scryfall Debug Panel (Toggle with D key) */
+.sf-debug-panel {
+  position: fixed;
+  top: 52px;
+  right: 14px;
+  z-index: 9999;
+  width: 350px;
+  background: rgba(10, 12, 20, 0.97);
+  border: 1.5px solid #e8b84b;
+  border-radius: 8px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.92);
+  color: #f1f5f9;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+.sf-dbg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: rgba(200, 146, 42, 0.2);
+  border-bottom: 1px solid rgba(200, 146, 42, 0.4);
+  font-weight: 700;
+  color: #fde047;
+}
+.sf-dbg-close {
+  background: transparent;
+  border: none;
+  color: #f87171;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.sf-dbg-body {
+  padding: 0.65rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+}
+.sf-dbg-btn {
+  width: 100%;
+  padding: 0.38rem 0.6rem;
+  background: #1e293b;
+  border: 1px solid #38bdf8;
+  border-radius: 4px;
+  color: #e0f2fe;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.sf-dbg-btn:hover {
+  background: #0284c7;
+  color: #fff;
+}
+
+/* 2. Strict 5:7 Card Component + Loading Skeleton + Error Placeholder */
+.pg-card {
+  position: relative;
+  width: var(--card-w, 85px);
+  aspect-ratio: 5 / 7;
+  flex-shrink: 0;
+  border-radius: 6px;
+  background: #11131c;
+  border: 1px solid rgba(226, 232, 240, 0.28);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.75);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.16s ease, box-shadow 0.16s ease;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+.pg-card:hover {
+  transform: translateY(-4px) scale(1.06);
+  border-color: #fde047;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.9), 0 0 12px rgba(250, 204, 21, 0.35);
+  z-index: 30;
+}
+.pg-card.is-tapped {
+  transform: rotate(90deg);
+  margin: 0 14px;
+  border-color: #f59e0b;
+}
+.pg-card.is-tapped:hover {
+  transform: rotate(90deg) scale(1.06);
+}
+
+.pg-card-media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 5 / 7;
+  border-radius: 5px;
+  overflow: hidden;
+  background: #161926;
+}
+.pg-card-media.is-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(30, 41, 59, 0.85) 25%,
+    rgba(71, 85, 105, 0.95) 50%,
+    rgba(30, 41, 59, 0.85) 75%
+  );
+  background-size: 200% 100%;
+  animation: pgSkeletonShimmer 1.25s linear infinite;
+}
+@keyframes pgSkeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.pg-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 5px;
+}
+
+.pg-card-error-fallback {
+  position: absolute;
+  inset: 0;
+  padding: 0.35rem;
+  background: linear-gradient(160deg, #2a1215, #12090d);
+  border: 1px dashed #ef4444;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.25rem;
+}
+.pg-err-icon {
+  font-size: 1rem;
+}
+.pg-err-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #fecaca;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+/* Attached Cards Shelf (Auras / Equipment sitting next to permanent) */
+.pg-card-with-attachments {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 2px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.pg-attached-shelf {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.pg-attached-shelf .pg-card {
+  --card-w: 48px;
+  opacity: 0.92;
+}
+
+/* 3. Playgroup Live Root Tabletop Container (Dark Felt Texture) */
+#tabletopArena {
+  position: fixed;
+  inset: 0;
+  z-index: 180;
+  display: none;
+  flex-direction: column;
+  background-color: #0b0e14;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 0),
+    radial-gradient(ellipse at 50% 50%, #141b26 0%, #090c12 100%);
+  background-size: 20px 20px, 100% 100%;
+  color: #f1f5f9;
+  font-family: 'Cinzel', serif;
+}
+#tabletopArena.show {
+  display: flex;
+}
+
+/* Top Bar */
+.pg-topbar {
+  height: 42px;
+  flex-shrink: 0;
+  background: #080b11;
+  border-bottom: 1px solid rgba(200, 146, 42, 0.32);
+  padding: 0 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.pg-topbar-left,
+.pg-topbar-center,
+.pg-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pg-phase-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.18rem 0.35rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.pg-phase-pill {
+  padding: 0.15rem 0.45rem;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  border-radius: 3px;
+}
+.pg-phase-pill.active {
+  background: #c8922a;
+  color: #090c12;
+}
+
+/* Main Tabletop Workspace: Left/Center Table + Right Preview & Stack Sidebar */
+.pg-main-layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 270px;
+  gap: 6px;
+  padding: 6px;
+}
+
+/* Left/Center Table Area: Opponents Grid on Top + My Large Board on Bottom */
+.pg-table-surface {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  min-width: 0;
+}
+
+/* Opponents Container */
+.pg-opponents-grid {
+  flex: 0.95;
+  min-height: 175px;
+  display: grid;
+  gap: 6px;
+}
+.pg-opponents-grid.opp-count-1 { grid-template-columns: 1fr; }
+.pg-opponents-grid.opp-count-2 { grid-template-columns: 1fr 1fr; }
+.pg-opponents-grid.opp-count-3 { grid-template-columns: 1fr 1fr 1fr; }
+.pg-opponents-grid.opp-count-4,
+.pg-opponents-grid.opp-count-5 {
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+}
+
+/* My Board Container (Large at the Bottom) */
+.pg-my-board-wrap {
+  flex: 1.45;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* PlayerArea Component */
+.pg-player-area {
+  flex: 1;
+  min-height: 0;
+  background: rgba(15, 20, 30, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+.pg-player-area.is-me {
+  border: 1.5px solid rgba(232, 184, 75, 0.58);
+  background: rgba(17, 23, 36, 0.94);
+}
+.pg-player-area.is-zoomed {
+  position: fixed;
+  inset: 48px 282px 12px 12px;
+  z-index: 120;
+  border: 2px solid #fde047;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.96);
+}
+
+/* PlayerPanel Header inside each PlayerArea */
+.pg-player-panel {
+  height: 36px;
+  flex-shrink: 0;
+  padding: 0 0.65rem;
+  background: rgba(8, 11, 18, 0.92);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+}
+.pg-player-id {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.pg-avatar-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.pg-voice-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+}
+.pg-counters-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  flex-wrap: wrap;
+}
+.pg-stat-chip {
+  padding: 0.12rem 0.42rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+.pg-stat-chip.life {
+  background: rgba(185, 28, 28, 0.3);
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #fecaca;
+  font-size: 0.72rem;
+}
+
+/* PlayerArea Body: Side Zones Column + Organized 3-Row Battlefield */
+.pg-area-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px;
+  padding: 6px;
+}
+
+/* Left Side Zones Strip (Command Zone, Library, Graveyard, Exile) */
+.pg-side-zones {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+  background: rgba(8, 11, 18, 0.65);
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.pg-zone-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.pg-zone-title {
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+.pg-zone-pile {
+  position: relative;
+  width: var(--pile-w, 64px);
+  aspect-ratio: 5 / 7;
+  border-radius: 5px;
+  border: 1px dashed rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pg-zone-pile .pg-card {
+  --card-w: 100%;
+  width: 100%;
+  height: 100%;
+}
+.pg-zone-count-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  z-index: 5;
+  background: rgba(9, 12, 18, 0.92);
+  border: 1px solid #e8b84b;
+  color: #fde047;
+  font-size: 0.56rem;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 8px;
+}
+
+/* Battlefield: 3 Non-Overlapping Rows (Creatures, Other Permanents, Lands) */
+.pg-battlefield-rows {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 4px;
+  overflow-y: auto;
+}
+.pg-bf-row {
+  position: relative;
+  min-height: 68px;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px dashed rgba(148, 163, 184, 0.14);
+  border-radius: 5px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+.pg-bf-row-label {
+  position: absolute;
+  right: 7px;
+  top: 3px;
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.38);
+  pointer-events: none;
+}
+
+/* Opponent Card Scaling vs My Board Card Scaling */
+.pg-opponents-grid .pg-card {
+  --card-w: 54px;
+}
+.pg-opponents-grid .pg-zone-pile {
+  --pile-w: 48px;
+}
+.pg-my-board-wrap .pg-card {
+  --card-w: 76px;
+}
+.pg-my-board-wrap .pg-zone-pile {
+  --pile-w: 66px;
+}
+
+/* Local Player Hand Fan at the Bottom */
+.pg-my-hand-bar {
+  height: 116px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, rgba(10, 14, 22, 0.85), rgba(6, 9, 15, 0.98));
+  border-top: 1px solid rgba(200, 146, 42, 0.3);
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  overflow-x: auto;
+}
+.pg-my-hand-bar .pg-card {
+  --card-w: 74px;
+}
+
+/* Right Sidebar: Fixed Card Preview Panel + Shared Stack Panel */
+.pg-right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+.pg-preview-panel {
+  flex: 1.35;
+  min-height: 0;
+  background: rgba(12, 16, 25, 0.96);
+  border: 1px solid rgba(200, 146, 42, 0.35);
+  border-radius: 8px;
+  padding: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+.pg-preview-card-stage {
+  width: 100%;
+  max-width: 210px;
+  aspect-ratio: 5 / 7;
+  margin: 0 auto;
+}
+.pg-preview-card-stage .pg-card-media {
+  width: 100%;
+  height: 100%;
+  border-radius: 9px;
+  border: 1px solid rgba(232, 184, 75, 0.5);
+}
+.pg-preview-oracle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: #e2e8f0;
+  background: rgba(0, 0, 0, 0.45);
+  border-left: 2px solid #e8b84b;
+  padding: 0.45rem 0.6rem;
+  white-space: pre-line;
+  border-radius: 4px;
+}
+
+/* Central Shared Stack Panel */
+.pg-stack-panel {
+  flex: 0.85;
+  min-height: 140px;
+  background: rgba(12, 16, 25, 0.96);
+  border: 1px solid rgba(167, 139, 250, 0.38);
+  border-radius: 8px;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.pg-stack-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #c4b5fd;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.25);
+  padding-bottom: 0.35rem;
+}
+.pg-stack-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.pg-stack-empty {
+  margin: auto;
+  font-size: 0.62rem;
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+}
